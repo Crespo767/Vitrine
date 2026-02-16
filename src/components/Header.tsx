@@ -5,6 +5,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useFavoritesStore } from "@/stores/favoritesStore";
 import { categoryLabels, categoryIcons, searchProducts, type Category } from "@/data/products";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,6 +18,7 @@ export default function Header() {
   const navigate = useNavigate();
   const itemCount = useCartStore((s) => s.getItemCount());
   const favCount = useFavoritesStore((s) => s.ids.length);
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -145,9 +147,23 @@ export default function Header() {
               )}
             </Button>
           </Link>
-          <Link to="/login">
-            <Button variant="outline" size="sm">Entrar</Button>
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-2 ml-2">
+              <div className="flex flex-col items-end hidden xl:flex">
+                <span className="text-sm font-medium leading-none">{user.user_metadata.full_name || user.email?.split("@")[0]}</span>
+                <button onClick={signOut} className="text-xs text-muted-foreground hover:text-foreground">Sair</button>
+              </div>
+              <img
+                src={user.user_metadata.avatar_url || `https://ui-avatars.com/api/?name=${user.email}`}
+                alt="Avatar"
+                className="h-8 w-8 rounded-full border border-border"
+              />
+            </div>
+          ) : (
+            <Link to="/login">
+              <Button variant="outline" size="sm">Entrar</Button>
+            </Link>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -179,9 +195,26 @@ export default function Header() {
                 <Button variant="ghost" size="sm" className="gap-2"><ShoppingCart className="h-4 w-4" /> Carrinho ({itemCount})</Button>
               </Link>
             </div>
-            <Link to="/login" onClick={() => setMobileMenu(false)}>
-              <Button variant="outline" className="w-full">Entrar</Button>
-            </Link>
+            {user ? (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 px-2 py-1">
+                  <img
+                    src={user.user_metadata.avatar_url || `https://ui-avatars.com/api/?name=${user.email}`}
+                    alt="Avatar"
+                    className="h-8 w-8 rounded-full border border-border"
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">{user.user_metadata.full_name || user.email?.split("@")[0]}</span>
+                    <span className="text-xs text-muted-foreground">{user.email}</span>
+                  </div>
+                </div>
+                <Button variant="outline" className="w-full" onClick={() => { signOut(); setMobileMenu(false); }}>Sair</Button>
+              </div>
+            ) : (
+              <Link to="/login" onClick={() => setMobileMenu(false)}>
+                <Button variant="outline" className="w-full">Entrar</Button>
+              </Link>
+            )}
             <Button variant="ghost" size="sm" onClick={toggleDark} className="gap-2">
               {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />} {darkMode ? "Modo claro" : "Modo escuro"}
             </Button>

@@ -16,38 +16,41 @@ import HowItWorks from "@/pages/HowItWorks";
 import Terms from "@/pages/Terms";
 import Privacy from "@/pages/Privacy";
 import Contact from "@/pages/Contact";
+import { AuthProvider } from "@/contexts/AuthContext";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <div className="flex-1">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/catalogo" element={<Catalog />} />
-              <Route path="/produto/:id" element={<ProductDetail />} />
-              <Route path="/carrinho" element={<Cart />} />
-              <Route path="/favoritos" element={<Favorites />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/como-funciona" element={<HowItWorks />} />
-              <Route path="/termos" element={<Terms />} />
-              <Route path="/privacidade" element={<Privacy />} />
-              <Route path="/contato" element={<Contact />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <div className="flex-1">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/catalogo" element={<Catalog />} />
+                <Route path="/produto/:id" element={<ProductDetail />} />
+                <Route path="/carrinho" element={<Cart />} />
+                <Route path="/favoritos" element={<Favorites />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/como-funciona" element={<HowItWorks />} />
+                <Route path="/termos" element={<Terms />} />
+                <Route path="/privacidade" element={<Privacy />} />
+                <Route path="/contato" element={<Contact />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+            <Footer />
           </div>
-          <Footer />
-        </div>
-        <CookieBanner />
-      </BrowserRouter>
-    </TooltipProvider>
+          <CookieBanner />
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
